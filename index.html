@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base Daily Check-in</title>
+  <link rel="icon" href="checkin-logo.svg" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #031926;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    button {
+      background: #1d9bf0;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background: #1483d6; }
+  </style>
+</head>
+<body>
+  <img src="checkin-logo.svg" alt="logo" width="120" />
+  <h1>Base Daily Check-in</h1>
+  <p>Sign once a day to record your streak 📆</p>
+  <button id="checkinBtn">Connect Wallet & Check-in</button>
+  <p id="result"></p>
+
+  <script type="module">
+    import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.0/dist/ethers.min.js";
+    const BACKEND_URL = "/api/checkin"; // same domain on Vercel
+    const btn = document.getElementById("checkinBtn");
+    const res = document.getElementById("result");
+
+    async function checkin() {
+      if (!window.ethereum) return alert("Install MetaMask or Coinbase Wallet");
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const addr = await signer.getAddress();
+      const message = `Base Daily Check-in ${new Date().toDateString()}`;
+      const signature = await signer.signMessage(message);
+      res.textContent = "Submitting ...";
+      const r = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: addr, message, signature })
+      });
+      const data = await r.json();
+      res.textContent = data.ok ? "✅ Check-in recorded!" : `❌ Error: ${data.error}`;
+    }
+    btn.onclick = checkin;
+  </script>
+</body>
+</html>
