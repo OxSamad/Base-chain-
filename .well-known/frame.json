@@ -1,0 +1,16 @@
+{
+  "name": "Base Daily Check-in",
+  "description": "Sign your wallet daily to mark attendance on Base",
+  "url": "https://your-vercel-app.vercel.app/index.html",
+  "icons": [
+    {
+      "src": "https://your-vercel-app.vercel.app/checkin-logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "author": {
+    "name": "BaseCheckin",
+    "url": "https://your-vercel-app.vercel.app"
+  }
+}
